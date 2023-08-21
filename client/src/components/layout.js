@@ -4,9 +4,23 @@ export default function Layout({ children }) {
   return (
     <>
       {/* {window ? "No SSR" : "SSR"} */}
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <header class="d-flex flex-wrap justify-content-center py-3 mb-0 border-bottom">
+        <Link href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+          <span class="fs-4">MarketBot</span>
+        </Link>
+
+        <ul class="nav nav-pills">
+          <li class="nav-item"><Link href="/" class="nav-link active" aria-current="page" id="navbar1">Home</Link></li>
+          <li class="nav-item"><Link href="/shopping-list" class="nav-link" id="navbar2">Shopping list</Link></li>
+          <li class="nav-item"><Link href="/shopping" class="nav-link" id="navbar2">Start Shopping</Link></li>
+          <li class="nav-item"><Link href="/about" class="nav-link" id="navbar2">About</Link></li>
+        </ul>
+      </header>
+
+
+      {/* <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <Link  class="navbar-brand" href="/">MarketBot</Link>
+          <Link class="navbar-brand" href="/">MarketBot</Link>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -24,7 +38,7 @@ export default function Layout({ children }) {
             </ul>
           </div>
         </div>
-      </nav>
+      </nav> */}
       <main>{children}</main>
     </>
   )

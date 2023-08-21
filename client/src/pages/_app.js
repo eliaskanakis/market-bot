@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import Layout from '../components/layout'
 import NoSSRWrapper from "../components/no-ssr-wrapper"
 
+import '../styles.css'
+
 export default function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
