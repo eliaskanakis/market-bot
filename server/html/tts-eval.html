@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    
+    <title>Text to speech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> 
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-3">
+            <div class="col-md-6">
+                <div class="input-group mb-3">
+                  <input id="txt" type="text" class="form-control" placeholder="Text to speech" aria-label="Recipient's username" aria-describedby="button-addon2">
+                  <button class="btn btn-outline-secondary" type="button" id="btn-speak">Speak</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById("btn-speak").addEventListener("click", async function(){
+            if (!document.getElementById("txt").value){
+                alert("Please enter some text");
+                return;
+            }
+            const url="{{url}}";
+            try{
+                const txt=document.getElementById("txt").value;
+                const body={
+                        "lang": "ell",
+                        "text": txt
+                };
+                const response = await fetch(url+"tts", {
+                    method: 'POST',
+                    headers: {"Content-Type":"application/json"},
+                    body: JSON.stringify(body)
+                });
+                const responseText=await response.text(); 
+                if (!response.ok) {
+                    throw new Error(`Response status:${response.status} ${response.statusText}.Response:${responseText}`);
+                }
+                if (response.headers.get("content-type")==='application/json' && responseText){
+                    const res=JSON.parse(responseText);
+                    if (res.error){
+                        alert("Tts error:"+res.error);
+                        return;
+                    }
+                    let audio = new Audio(url+res.mp3_file);
+                    audio.play()
+                }else{
+                    alert('Invalid response:'+responseText);
+                }
+            }catch(error){
+                alert('Error fething from url '+url+".Message:"+error.message);
+            }
+        });
+    </script>
+</body>
+</html>
