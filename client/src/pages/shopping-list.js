@@ -1,66 +1,71 @@
 import { useState, useEffect } from "react"
+import callService from "../utils/call-service"
 
 export default function ShoppingList() {
   const [previewByCategory, setPreviewByCategory] = useState(false)
   const [shoppingList, setShoppingList] = useState([])
   const [newItem, setNewItem] = useState("")
+  const [itemsByCategory, setItemsByCategory] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [info, setInfo] = useState(null);
 
   useEffect(() => {
-    setShoppingList(
-      ["Λάχανο", "Καρότο", "Μαρούλι", "Χλωρίνη", "Detol", "Σαπούνι","Κουνουπίδι", "Καφές", "Γάλα"]
-    )
+    const tmpShoppingList = localStorage.getItem("ShoppingList");
+    if (!tmpShoppingList || tmpShoppingList==="[]") {
+      setShoppingList(["Αγγούρια", "Αυγά", "Αφρός ξυρίσματος", "Γάλα", "Καρότα", "Καφέ", "Κοτόπουλο",
+        "Κουάκερ", "Κρασιά", "Μακαρόνια", "Μέλι", "Μήλα", "Μουστάρδα", "Μπανάνες", "Μπατονέτες",
+        "Μπύρες", "Ντομάτες", "Οδοντόκρεμα", "Πατάτες", "Ρύζι", "Σαμπουάν", "Ταχίνι",
+        "Τόνος", "Τορτελίνια", "Τυρί τοστ", "Φέτα", "Φουντούκια", "Φυστίκια", "Φυστικοβούτυρο",
+        "Ψωμί τοστ"]);
+    } else {
+      setShoppingList(JSON.parse(tmpShoppingList));
+    }
   }, [])
 
-  function getItemsByCategory() {
-    return [{
-      "category": "Λαχανικά",
-      "items": ["Λάχανο", "Καρότο", "Μαρούλι", "Κουνουπίδι"]
-    }, {
-      "category": "Πρωινό",
-      "items": ["Καφές", "Γάλα"]
-    }, {
-      "category": "Καθαριστικά",
-      "items": ["Χλωρίνη", "Detol", "Σαπούνι"]
-    }]
+  async function categorize() {
+    try {
+      setErrorMessage(null);
+      setInfo("Waiting chat gpt to categorize the items ....");
+      const res = await callService("categorize", shoppingList);
+      setItemsByCategory(res.itemsByCategory);
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setInfo(null);
+    }
   }
 
   function onDelete(e, item) {
     e.preventDefault();
-    let newShoppingList=[...shoppingList];
+    let newShoppingList = [...shoppingList];
     var index = newShoppingList.indexOf(item);
-    newShoppingList.splice(index,1);
+    newShoppingList.splice(index, 1);
     setShoppingList(newShoppingList);
-    /*
-    setShoppingList(oldShoppingList => {
-      let newShoppingList=[...oldShoppingList];
-    });*/
+    localStorage.setItem("ShoppingList", JSON.stringify(newShoppingList));
   }
 
   function createFlatList() {
+    if (!shoppingList) return null;
     return <div class="shoppingList" id="shoppingList">
       <h2 class="list">Shopping List : </h2>
       {shoppingList.map((item, i) => {
-        return <div class="d-flex flex-row"><h4 class="item" key={'item' + i}>{item}</h4>  
-        <button class="btn-delete" onClick={(e)=>onDelete(e, item)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-          </svg>
-        </button></div>
+        return <div key={'item-' + i} class="d-flex flex-row">
+          <h4 class="item">{item}</h4>
+          <button class="btn-delete" onClick={(e) => onDelete(e, item)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+            </svg>
+          </button>
+        </div>
       })}
     </div>
-    /*
-    const array=getShoppingList();
-    let retVal=[];
-    for(let i=0;i<array.length;i++){
-      retVal.push(<p key={'item'+i}>{array[i]}</p>);
-    }
-    return retVal;*/
   }
 
   function createListByCategory() {
+    if (!itemsByCategory) return null;
     return <div class="accordion" id="accordionExample">
-      {getItemsByCategory().map((cat, i) =>
+      {itemsByCategory.map((cat, i) =>
         <div class="accordion-item" id="accordion-item" key={"e" + i}>
           <h2 class="accordion-header">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${i}`} aria-expanded="true" aria-controls={`collapse${i}`} >
@@ -77,18 +82,6 @@ export default function ShoppingList() {
         </div>
       )}
     </div>
-
-    /*
-    return <ul key="categories">
-      {getItemsByCategory().map((cat, i) => <li key={"e" + i}>
-        {cat.category}
-        <ul key="items">
-          {cat.items.map((item, j) => <h4 id="item" key={"e" + j}>
-            {item}
-          </h4>)}
-        </ul>
-      </li>)}
-    </ul>*/
   }
 
   function createList() {
@@ -99,11 +92,18 @@ export default function ShoppingList() {
     }
   }
 
-  function onByCatClick(e) {
+  async function onByCatClick(e) {
+    if (!previewByCategory) await categorize();
     setPreviewByCategory(!previewByCategory);
   }
 
   return <>
+    {info ? <div class="alert alert-info" role="alert">
+      {info}
+    </div> : null}
+    {errorMessage ? <div class="alert alert-warning" role="alert">
+      {errorMessage}
+    </div> : null}
     <div class="container">
       <form id="form">
         <h1 for="item" class="add" id="add">Add a Shopping Item :</h1><br />
@@ -111,19 +111,21 @@ export default function ShoppingList() {
           id="lname" name="lname" placeholder="Shopping List"
           value={newItem}
           onChange={(e) => { setNewItem(e.target.value) }}
-        /><br/>
+        /><br />
         <button id="button1"
           type="button" class="btn btn-success"
-          onClick={() => { 
+          onClick={() => {
             if (!newItem) return;
-            setShoppingList(current => [...current, newItem]);
+            let newShoppingList=[...shoppingList, newItem];
+            localStorage.setItem("ShoppingList", JSON.stringify(newShoppingList));
+            setShoppingList(newShoppingList);
             setPreviewByCategory(false);
           }}
-        >Add</button><br/>
+        >Add</button><br />
         <button id="button2" type="button"
           class="btn btn-outline-success"
           onClick={onByCatClick}
-        >{previewByCategory?"All":"By Category"}</button>
+        >{previewByCategory ? "All" : "By Category"}</button>
         <div id="outer-shoppingList">
           {createList()}
         </div>
