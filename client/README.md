@@ -11,7 +11,8 @@ The user can ask the assistant, "Please tell me the fruits".
 The assistant will respond with "bananas and apples".  
 If the user requests, "Please remove the fruits (or the apples)" the assistant will respond by listing the items that have been removed from the shopping list.
 
-A video presentation is accessible at [youtube](https://www.youtube.com/watch?v=-pK0CueuXKM).
+A video presentation is accessible at [youtube](https://www.youtube.com/watch?v=-pK0CueuXKM).  
+Additional details can be found [here](https://www.linkedin.com/pulse/chatbot-offers-voice-guidance-during-shopping-process-kanakis-pmp%3FtrackingId=ZFcidBoXQF6q7GCCFa9C%252Bg%253D%253D/?trackingId=ZFcidBoXQF6q7GCCFa9C%2Bg%3D%3D).  
 A Greek instance of the app is available at (https://ekanakis-marketbot.hf.space/site/). This instance is installed on a basic infrastructure, and the average response time is approximately 7 seconds.
 Please note that there is no guarantee of uninterrupted functionality, as the [ChatGPT](https://chat.openai.com/) is funded through my personal account.  
 
